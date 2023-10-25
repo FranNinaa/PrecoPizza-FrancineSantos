@@ -7,15 +7,20 @@
   <link rel="stylesheet" href="../Css/style.css">
   <link rel="icon" href="../Image/pizza.png" type="image/x-icon">
 </head>
+<body> <!-- Abre a tag <body> -->
 
-<h1>Calculadora de pizza</h1>
-<form>
+<h1>Calculadora de Pizza</h1>
+<form id="pizza-form"> 
+
   <label for="nome">Nome comercial</label>
-  <input type="text" id="nome">
+  <input type="text" id="nome" required> 
+
   <label for="tamanho">Tamanho (cm)</label>
-  <input type="number" id="tamanho">
+  <input type="number" id="tamanho" required>
+
   <label for="preco">Preço</label>
-  <input type="number" id="preco">
+  <input type="number" id="preco" required> 
+
   <input type="submit" value="Calcular">
 </form>
 <br><br>
@@ -29,31 +34,9 @@
       <th>Diferença %</th>
     </tr>
   </thead>
-  <tbody>
-    <tr>
-      <td>Broto</td>
-      <td>1 5</td>
-      <td>R$ 25,00</td>
-      <td>R$ 1,00</td>
-      <td>Melhor CB</td>
-    </tr>
-    <tr>
-      <td>Pequena</td>
-      <td>25</td>
-      <td>R$ 35,00</td>
-      <td>R$ 1,40</td>
-      <td>+40%</td>
-    </tr>
-    <tr>
-      <td>Média</td>
-      <td>35</td>
-      <td>R$ 40,00</td>
-      <td>R$ 1,50</td>
-      <td>+25%</td>
-    </tr>
+  <tbody id="tabela-pizzas"> 
   </tbody>
 </table>
-</body>
-<script src="../JS/script.js"></script>
+</body> <!-- Fecha a tag <body> -->
+<script src="../JS/scriptV1.js"></script>
 </html>
-

@@ -1,86 +1,81 @@
-// Função para calcular o custo benefício da pizza com base no formato
-function calcularCustoBeneficio() {
-    const nomeInput = document.getElementById('nome');
-    const tamanhoInput = document.getElementById('tamanho');
-    const precoInput = document.getElementById('preco');
-  
-    // Verificar se os elementos existem no DOM
-    if (!nomeInput || !tamanhoInput || !precoInput) {
-      alert('Elementos do DOM não encontrados.');
-      return null;
-    }
-  
-    const nome = nomeInput.value;
-    const tamanho = tamanhoInput.value;
-    const preco = parseFloat(precoInput.value);
-  
-    // Verificar se os dados de entrada são válidos
-    if (isNaN(preco) || preco <= 0) {
-      alert('Preço inválido.');
-      return null;
-    }
-  
-    let area;
-  
+// Array para armazenar os dados das pizzas
+var pizzas = [];
+
+// Função que é chamada quando o formulário é enviado
+document.querySelector('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Obtém os valores do formulário
+    var nome = document.getElementById('nome').value;
+    var tamanho = document.getElementById('tamanho').value; // Altera o tipo de input para "text" para acomodar diferentes formatos
+    var preco = parseFloat(document.getElementById('preco').value);
+
+    // Calcula a área da pizza
+    var area;
     if (tamanho.includes('x')) {
-      const [largura, altura] = tamanho.split('x').map(parseFloat);
-      area = largura * altura;
+        // Pizza retangular ou quadrada
+        var dimensoes = tamanho.split('x');
+        var altura = parseFloat(dimensoes[0]);
+        var largura = parseFloat(dimensoes[1]);
+        area = altura * largura;
     } else {
-      const raio = parseFloat(tamanho) / 2;
-      area = Math.PI * Math.pow(raio, 2);
+        // Pizza redonda
+        var raio = parseFloat(tamanho) / 2;
+        area = Math.PI * (raio * raio);
     }
-  
-    const custoPorCm2 = preco / area;
-  
-    return { nome, tamanho, preco, custoPorCm2 };
-  }
-  
-  // Função para adicionar uma nova pizza à tabela
-  function adicionarPizza() {
-    const pizzaAtual = calcularCustoBeneficio();
-  
-    if (!pizzaAtual) {
-      alert('Não foi possível calcular o custo benefício da pizza.');
-      return;
+
+    // Calcula o preço por cm²
+    var precoCmQuadrado = preco / area;
+
+    // Adiciona os dados da pizza ao array
+    pizzas.push([nome, tamanho, preco, precoCmQuadrado, 0]);
+
+    // Recalcula a diferença percentual
+    if (pizzas.length > 1) {
+        var melhorCB = pizzas.reduce(function (prev, current) {
+            return (prev[3] < current[3]) ? prev : current;
+        });
+
+        pizzas.forEach(function (pizza) {
+            var diferencaPercentual = ((pizza[3] - melhorCB[3]) / melhorCB[3]) * 100;
+            pizza[4] = diferencaPercentual;
+        });
     }
-  
-    const tabela = document.querySelector('table tbody');
-  
-    if (!tabela) {
-      alert('Tabela não encontrada.');
-      return;
-    }
-  
-    const novaLinha = document.createElement('tr');
-    novaLinha.innerHTML = `
-      <td>${pizzaAtual.nome}</td>
-      <td>${pizzaAtual.tamanho}</td>
-      <td>R$ ${pizzaAtual.preco.toFixed(2)}</td>
-      <td>R$ ${pizzaAtual.custoPorCm2.toFixed(2)}</td>
-      <td></td>
-    `;
-  
-    tabela.appendChild(novaLinha);
-  
-    if (tabela.rows.length > 1) {
-      const linhaAnterior = tabela.rows[tabela.rows.length - 2];
-  
-      if (linhaAnterior && linhaAnterior.cells[3]) {
-        const custoPorCm2Anterior = parseFloat(linhaAnterior.cells[3].innerText.substring(2));
-        const diferencaPercentual = ((pizzaAtual.custoPorCm2 - custoPorCm2Anterior) / custoPorCm2Anterior) * 100;
-        linhaAnterior.cells[4].innerText = `${diferencaPercentual.toFixed(2)}%`;
-      }
-    }
-  }
-  
-  const form = document.querySelector('form');
-  
-  if (form) {
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      adicionarPizza();
+
+    // Ordena as pizzas pelo custo-benefício
+    pizzas.sort(function (a, b) {
+        return a[3] - b[3];
     });
-  } else {
-    alert('Formulário não encontrado.');
-  }
-  
+
+    // Atualiza a tabela no HTML
+    atualizarTabela();
+});
+
+function atualizarTabela() {
+    var tbody = document.querySelector('table tbody');
+    tbody.innerHTML = '';
+
+    pizzas.forEach(function (pizza) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + pizza[0] + '</td>' +
+            '<td>' + pizza[1] + '</td>' +
+            '<td>R$ ' + pizza[2].toFixed(2) + '</td>' +
+            '<td>R$ ' + pizza[3].toFixed(2) + '</td>' +
+            '<td>' + (pizza[4] === 0 ? 'Melhor CB' : '+' + pizza[4].toFixed(0) + '%') + '</td>';
+
+        tbody.appendChild(tr);
+    });
+}
+/*
+    As principais modificações na versão 2 incluem:
+
+     - O tipo do input de tamanho mudou para "text" para acomodar diferentes 
+        formatos de pizza (redonda, retangular, quadrada). Isso permite que 
+        o usuário insira dimensões como "20x30" para pizzas retangulares.
+
+    - O cálculo da área foi ajustado para tratar pizzas redondas e pizzas
+        retangulares/quadradas de forma diferente.
+
+     - As demais partes do script permanecem semelhantes à versão anterior, 
+        incluindo o cálculo de custo-benefício, classificação e atualização da tabela.
+*/
