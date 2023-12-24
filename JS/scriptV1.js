@@ -113,7 +113,7 @@ function atualizarTabela() {
             '<td>' + pizza[1] + '</td>' +
             '<td>R$ ' + pizza[2].toFixed(2) + '</td>' +
             '<td>R$ ' + pizza[3].toFixed(2) + '</td>' +
-            '<td>' + (pizza[4] === 0 ? 'Melhor CB' : '+' + pizza[4].toFixed(0) + '%') + '</td>';
+            '<td>' + (pizza[4] === 0 ? 'Melhor Custo Beneficio' : '+' + pizza[4].toFixed(0) + '%') + '</td>';
 
         tbody.appendChild(tr);
     });
